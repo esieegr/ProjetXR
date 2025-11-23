@@ -13,6 +13,7 @@ GameObject:
   - component: {fileID: 2557610762468885219}
   - component: {fileID: 1832599104999946994}
   - component: {fileID: 9060503372622754078}
+  - component: {fileID: 594687539603281371}
   m_Layer: 0
   m_Name: Target
   m_TagString: Untagged
@@ -129,3 +130,17 @@ MonoBehaviour:
   minSpeed: 0.5
   maxSpeed: 2
   moveRadius: 5
+--- !u!114 &594687539603281371
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8173857818533623477}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: aab1a67c299f10d4ebcdc96e7c2a132d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Target
+  pointsValue: 1
+  destroyEffect: {fileID: 0}
