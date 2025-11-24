@@ -45,6 +45,11 @@ public class TargetSpawner : MonoBehaviour
         }
 
         Debug.Log($"Successfully spawned {successfulSpawns}/{numberOfTargets} targets");
+        
+        if (ScoreManager.Instance != null)
+        {
+            ScoreManager.Instance.SetTotalTargets(successfulSpawns);
+        }
     }
 
     Vector3? FindValidSpawnPosition(MRUKRoom room, List<Vector3> existingPositions)

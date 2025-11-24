@@ -19,9 +19,41 @@ public class GameModeManager : MonoBehaviour
     [Header("Passthrough")]
     [SerializeField] OVRPassthroughLayer passthroughLayer;
 
+    [Header("Flashlight Management")]
+    [SerializeField] bool disableFlashlightsInMR = true;
+
+    ControllerFlashlight[] controllerFlashlights;
+    bool[] flashlightsInitialState;
+
     void Start()
     {
+        FindFlashlights();
+        EnsureCameraTransparency();
         ApplyMode(currentMode);
+    }
+
+    void EnsureCameraTransparency()
+    {
+        Camera mainCamera = Camera.main;
+        if (mainCamera != null)
+        {
+            Color bg = mainCamera.backgroundColor;
+            mainCamera.backgroundColor = new Color(bg.r, bg.g, bg.b, 0f);
+            mainCamera.clearFlags = CameraClearFlags.SolidColor;
+        }
+    }
+
+    void FindFlashlights()
+    {
+        controllerFlashlights = FindObjectsByType<ControllerFlashlight>(FindObjectsSortMode.None);
+        if (controllerFlashlights != null && controllerFlashlights.Length > 0)
+        {
+            flashlightsInitialState = new bool[controllerFlashlights.Length];
+            for (int i = 0; i < controllerFlashlights.Length; i++)
+            {
+                flashlightsInitialState[i] = controllerFlashlights[i].IsOn();
+            }
+        }
     }
 
     public void SetVRMode()
@@ -70,6 +102,17 @@ public class GameModeManager : MonoBehaviour
             passthroughLayer.enabled = false;
         }
 
+        if (disableFlashlightsInMR && controllerFlashlights != null)
+        {
+            for (int i = 0; i < controllerFlashlights.Length; i++)
+            {
+                if (controllerFlashlights[i] != null && i < flashlightsInitialState.Length)
+                {
+                    controllerFlashlights[i].SetFlashlightState(flashlightsInitialState[i]);
+                }
+            }
+        }
+
         if (environmentMeshes != null)
         {
             foreach (var environmentMesh in environmentMeshes)
@@ -98,6 +141,17 @@ public class GameModeManager : MonoBehaviour
         if (passthroughLayer != null)
         {
             passthroughLayer.enabled = true;
+        }
+
+        if (disableFlashlightsInMR && controllerFlashlights != null)
+        {
+            foreach (var flashlight in controllerFlashlights)
+            {
+                if (flashlight != null)
+                {
+                    flashlight.SetFlashlightState(false);
+                }
+            }
         }
 
         if (environmentMeshes != null)

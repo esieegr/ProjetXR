@@ -23,6 +23,7 @@ public class XRWeapon : MonoBehaviour
     public int bulletPerShot = 1;
 
     private AudioSource shotSound;
+    private OVRCameraRig cameraRig;
 
 
     // Start is called before the first frame update
@@ -31,14 +32,44 @@ public class XRWeapon : MonoBehaviour
 
         shotSound = GetComponent<AudioSource>();
         remainingAmmo = magazineSize;
+        cameraRig = FindAnyObjectByType<OVRCameraRig>();
     }
 
     // Update is called once per frame
     void Update()
     {
         if (OVRInput.GetDown(shootingBtn) && forcedHeld) tir();
-        if (_grabbable.SelectingPointsCount > 0 && OVRInput.GetDown(shootingBtn)) tir();
+        
+        if (_grabbable.SelectingPointsCount > 0)
+        {
+            OVRInput.RawButton currentTrigger = GetCurrentHandTrigger();
+            if (OVRInput.GetDown(currentTrigger)) tir();
+        }
+        
         if (remainingAmmo == 0) Destroy(gameObject);
+    }
+
+    private OVRInput.RawButton GetCurrentHandTrigger()
+    {
+        if (cameraRig == null)
+        {
+            return shootingBtn;
+        }
+
+        Vector3 leftControllerPos = cameraRig.leftHandAnchor.position;
+        Vector3 rightControllerPos = cameraRig.rightHandAnchor.position;
+        
+        float distanceToLeft = Vector3.Distance(transform.position, leftControllerPos);
+        float distanceToRight = Vector3.Distance(transform.position, rightControllerPos);
+        
+        if (distanceToLeft < distanceToRight)
+        {
+            return OVRInput.RawButton.LIndexTrigger;
+        }
+        else
+        {
+            return OVRInput.RawButton.RIndexTrigger;
+        }
     }
 
     void tir()

@@ -5,7 +5,10 @@ public class ScoreManager : MonoBehaviour
 {
     public static ScoreManager Instance;
     public int score = 0;
-    public TMP_Text scoreText; // optional; assign a TMP Text in Canvas
+    public TMP_Text scoreText;
+    
+    public int remainingTargets = 0;
+    public TMP_Text targetsText; // optional; assign a TMP Text in Canvas
 
     void Awake()
     {
@@ -25,8 +28,32 @@ public class ScoreManager : MonoBehaviour
         UpdateUI();
     }
 
+    public void SetTotalTargets(int total)
+    {
+        remainingTargets = total;
+        UpdateUI();
+    }
+
+    public void TargetDestroyed()
+    {
+        remainingTargets--;
+        if (remainingTargets < 0) remainingTargets = 0;
+        UpdateUI();
+    }
+
     void UpdateUI()
     {
         if (scoreText != null) scoreText.text = $"Score: {score}";
+        if (targetsText != null)
+        {
+            if (remainingTargets == 0)
+            {
+                targetsText.text = "Victoire !";
+            }
+            else
+            {
+                targetsText.text = $"{remainingTargets} Restants";
+            }
+        }
     }
 }

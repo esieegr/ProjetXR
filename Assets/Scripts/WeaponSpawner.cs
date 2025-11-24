@@ -67,9 +67,10 @@ public class WeaponSpawner : MonoBehaviour
                 Vector3 directionToPlayer = playerCamera.position - spawnedWeapon.transform.position;
                 if (directionToPlayer != Vector3.zero)
                 {
+                    Quaternion targetRotation = Quaternion.LookRotation(directionToPlayer) * Quaternion.Euler(0, 180, 0);
                     spawnedWeapon.transform.rotation = Quaternion.Slerp(
                         spawnedWeapon.transform.rotation,
-                        Quaternion.LookRotation(directionToPlayer),
+                        targetRotation,
                         Time.deltaTime * followSpeed
                     );
                 }
